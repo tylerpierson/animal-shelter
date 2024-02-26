@@ -28,6 +28,60 @@
 function App() {
   const [user, setUser] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const [token, setToken] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
+  const signUp = async credentials => {
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+      });
+      const data = await response.json();
+      setUser(data.user);
+      setToken(data.token);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const login = async credentials => {
+    try {
+      const response = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+      });
+      const data = await response.json();
+      const tokenData = data.token;
+      localStorage.setItem('token', tokenData);
+      const userData = data.user;
+      localStorage.set('user', JSON.stringify(userData));
+      setUser(userData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const createAnimal = async () => {
+    if (!token) {
+      return;
+    }
+  };
+  const getAllAnimals = async () => {};
+  const getIndividualAnimal = async () => {};
+  const updateAnimal = async () => {
+    if (!token) {
+      return;
+    }
+  };
+  const deleteAnimal = async () => {
+    if (!token) {
+      return;
+    }
+  };
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Routes, null, /*#__PURE__*/React.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Route, {
     path: "/",
     element: /*#__PURE__*/React.createElement(_pages_HomePage_HomePage__WEBPACK_IMPORTED_MODULE_2__["default"], null)
@@ -503,4 +557,4 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=App.979ca10357d78ae69bd3b1256d2563b6.js.map
+//# sourceMappingURL=App.07b3ef1f09f3e6fe3adde34723a49ede.js.map
