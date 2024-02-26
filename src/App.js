@@ -48,29 +48,81 @@ export default function App(){
     }
   }
 
-  const createAnimal = async () => {
+  const createAnimal = async (animalData, token) => {
     if(!token){
       return
+    }
+    try {
+      const response = await fetch('/api/animals', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(animalData)
+      })
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error(error)
     }
   } 
 
   const getAllAnimals = async () => {
-
-  }
-
-  const getIndividualAnimal = async () => {
-
-  }
-
-  const updateAnimal = async () => {
-    if(!token){
-      return
+    try {
+      const response = await fetch('/api/animals')
+      const data = response.json()
+      return data
+    } catch (error) {
+      console.error(error)
     }
   }
 
-  const deleteAnimal = async () => {
+  const getIndividualAnimal = async (id) => {
+    try {
+      const response = await fetch(`/api/animals/${id}`)
+      const data = response.json()
+      return data
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const updateAnimal = async (newAnimalData, id, token) => {
     if(!token){
       return
+    }
+    try {
+      const response = await fetch(`/api/animals/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(newAnimalData)
+      })
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const deleteAnimal = async (id, token) => {
+    if(!token){
+      return
+    }
+    try {
+      const response = await fetch(`/api/animals/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const data = response.json()
+      return data
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -79,11 +131,23 @@ export default function App(){
       <Routes>
         <Route 
           path='/'
-          element={<HomePage />}>
+          element={<HomePage 
+            user={user}
+            setUser={setUser}
+            token={token}
+            setToken={setToken}
+            createAnimal={createAnimal}
+            getAllAnimals={getAllAnimals}
+          />}>
         </Route>
         <Route 
           path='/register'
-          element={<AuthPage />}>
+          element={<AuthPage 
+            setUser={setUser}
+            setToken={setToken}
+            signUp={signUp}
+            login={login}
+          />}>
         </Route>
         <Route 
           path='/animals'
