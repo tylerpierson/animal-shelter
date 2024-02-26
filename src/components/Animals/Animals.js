@@ -1,5 +1,3 @@
-export default function Animals(){
-    return (
-        <h1>Animals</h1>
-    )
+export default function Animals(props) {
+    return <h1>Animals</h1>
 }

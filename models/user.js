@@ -1,28 +1,27 @@
 require('dotenv').config()
-const { Schema, model } = require('mongoose')
+const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
-const crypto = require('crypto')
-const SALT_ROUNDS = 6
+const jwt = require('jsonwebtoken')
 
-const userSchema = new Schema({
-  name: { type: String, required: true },
-  email: { type: String, unique: true, trim: true, lowercase: true, required: true },
-  password: { type: String, trim: true, minLength: 5, require: true },
-  animals: [{ type: Schema.Types.ObjectId, ref: 'Bookmark' }]
-}, {
-  timestamps: true,
-  toJSON: {
-    transform (doc, ret) {
-      delete ret.password
-      return ret
-    }
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  password: String,
+  animals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Animal'}]
+})
+
+userSchema.pre('save', async function(next) {
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 8)
   }
+  next()
 })
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next()
-  const password = crypto.createHmac('sha256', process.env.SECRET).update(this.password).digest('hex').split('').reverse().join('')
-  this.password = await bcrypt.hash(password, SALT_ROUNDS)
-})
+userSchema.methods.generateAuthToken = async function() {
+  const token = jwt.sign({ _id: this._id, user: this }, process.env.SECRET)
+  return token
+}
 
-module.exports = model('User', userSchema)
+const User = mongoose.model('User', userSchema)
+
+module.exports = User
